@@ -1,0 +1,4 @@
+PaPDF~=1.1.5
+PyQt5~=5.15.6
+imagesize~=1.3.0
+setuptools==60.3.1
