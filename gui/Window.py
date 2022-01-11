@@ -1,5 +1,6 @@
 from pathlib import Path
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QAction, qApp
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout
 from PyQt5.QtWidgets import QPushButton, QFileDialog, QMessageBox
 from PDF.pdfimage import Convert
@@ -10,6 +11,16 @@ class Window(QWidget):
     def __init__(self):
         super(Window, self).__init__()
         self.setWindowTitle("PyImgpdf")
+        # Context Menu
+        # self.setContextMenuPolicy(Qt.ActionsContextMenu)
+        #Actions Context Menu
+        # english = QAction(self.tr('English'), self)
+        # quitAction = QAction(self.tr("Quit"), self)
+        # quitAction.triggered.connect(qApp.quit)
+
+        # self.addAction(english)
+        # self.addAction(quitAction)
+
         self.resize(400, 300)
 
         self.pdf = Convert()
@@ -19,11 +30,11 @@ class Window(QWidget):
         hl = QHBoxLayout()
 
         self.lista = Lista()
-        agregar = QPushButton(self.tr('Aceptar'))
+        agregar = QPushButton(self.tr('Agregar'))
         agregar.clicked.connect(self.event_agregar)
-        eliminar = QPushButton("Eliminar")
+        eliminar = QPushButton(self.tr('Eliminar'))
         eliminar.clicked.connect(self.event_eliminar)
-        convertir = QPushButton("Convertir")
+        convertir = QPushButton(self.tr('Convertir'))
         convertir.clicked.connect(self.event_convertir)
 
         hl.addWidget(agregar)
@@ -37,13 +48,12 @@ class Window(QWidget):
         self.setLayout(vl)
 
     def event_agregar(self):
-        filename, _ = QFileDialog.getOpenFileName(self.parentWidget(), 'Agregar Imagen', f'{Path.home()}',
-                                                  'Imagenes(*.jpeg *.jpg *.png)')
+        filename, _ = QFileDialog.getOpenFileName(self.parentWidget(), self.tr('Agregar Imagen'), f'{Path.home()}',
+                                                  self.tr('Imagenes(*.jpeg *.jpg *.png)'))
         if not filename:
-            print('filename es vacio')
+            print(self.tr('filename es vacio'))
         else:
             self.lista.agregar(filename)
-            print('filename no es vacio')
 
 
     def event_eliminar(self):
@@ -52,18 +62,18 @@ class Window(QWidget):
 
     def event_convertir(self):
         if self.lista.modelo.rowCount() > 0:
-            filename, _ = QFileDialog.getSaveFileName(self.parentWidget(), 'Guardar Pdf', f'{Path.home()}', 'Pdf(*.pdf)')
+            filename, _ = QFileDialog.getSaveFileName(self.parentWidget(), self.tr('Guardar Pdf'), f'{Path.home()}', 'Pdf(*.pdf)')
             self.pdf.imgtopdfautosize(filename, self.lista.lista)
-            self.msg.setWindowTitle('Convertido')
+            self.msg.setWindowTitle(self.tr('Exito'))
             self.msg.setIcon(QMessageBox.Information)
-            self.msg.setText('Convercion Completada!')
+            self.msg.setText(self.tr('Finalizado con exito!'))
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.exec_()
             self.lista.lista.clear()
             self.lista.modelo.setStringList(self.lista.lista)
         else:
-            self.msg.setWindowTitle('Error')
+            self.msg.setWindowTitle(self.tr('Error'))
             self.msg.setIcon(QMessageBox.Warning)
-            self.msg.setText('Agrege imagenes para poder convertir!')
+            self.msg.setText(self.tr('Agrege imagenes para poder convertir!'))
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.exec_()

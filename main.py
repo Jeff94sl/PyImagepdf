@@ -7,8 +7,8 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     traductor = QTranslator()
-    traductor.load("qtbase_"+ QLocale.system().name(),
-                   QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+    traductor.load("qtbase_"+ QLocale.system().name(),QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+    print(QLocale.system().name())
     app.installTranslator(traductor)
 
     win = Window()
